@@ -98,7 +98,7 @@ type Poll struct {
 type User struct {
 	About     string
 	Created   int
-	Delat     int
+	Delay     int
 	Id        string
 	Karma     int
 	Submitted []int
@@ -123,6 +123,38 @@ func (c *Client) GetItem(id int) Item {
 		panic(err)
 	}
 	return i
+
+}
+
+func (c *Client) GetUser(id string) User {
+	url := c.BaseUrl + c.Version + "/user/" + id + c.Suffix
+	response, _ := http.Get(url)
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	var user User
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		panic(err)
+	}
+	return user
+
+}
+
+func (c *Client) MaxItemId() string {
+	url := c.BaseUrl + c.Version + "/maxitem/" + c.Suffix
+	response, _ := http.Get(url)
+	defer response.Body.Close()
+	body, _ := ioutil.ReadAll(response.Body)
+	return string(body)
+
+}
+
+func (c *Client) TopStories() string {
+	url := c.BaseUrl + c.Version + "/topstories/" + c.Suffix
+	response, _ := http.Get(url)
+	defer response.Body.Close()
+	body, _ := ioutil.ReadAll(response.Body)
+	return string(body)
 
 }
 
@@ -235,6 +267,7 @@ func (i Item) ConvertToPart() Part {
 	return part
 
 }
+
 func (c Client) GetPart(id int) (Part, error) {
 	item := c.GetItem(id)
 
@@ -245,7 +278,8 @@ func (c Client) GetPart(id int) (Part, error) {
 		return item.ConvertToPart(), nil
 	}
 }
+
 func main() {
 	cl := NewClient()
-	fmt.Println(cl.GetPoll(2921983))
+	fmt.Println(cl.TopStories())
 }
