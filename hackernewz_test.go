@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func TestNewClient(t *testing.T) {
 	want := NewClient()
@@ -15,8 +12,18 @@ func TestNewClient(t *testing.T) {
 
 func TestGetItem(t *testing.T) {
 	client := NewClient()
-	item := client.GetItem(2921983)
-	fmt.Println(item)
+
+	//Only Id field is require for an item
+	want := Item{
+		Id: 8863,
+	}
+
+	got := client.GetItem(8863)
+
+	if want.Id != got.Id {
+		t.Errorf("Error reading story with Id:%v", got.Id)
+	}
+
 }
 
 //why is this failing when func is 't' and not T
